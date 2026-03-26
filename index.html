@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Requêtes - Adaptation de Textes PFEQ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .btn-nav:disabled { opacity: 0.5; cursor: not-allowed; }
+        .custom-checkbox:checked + div { background-color: #ebf5ff; border-color: #3b82f6; }
+        .custom-radio:checked + div { background-color: #ebf5ff; border-color: #3b82f6; box-shadow: 0 0 0 2px #3b82f6; }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Transition douce pour les panneaux */
+        #left_panel, #right_panel { transition: all 0.3s ease-in-out; }
+    </style>
+</head>
+<body class="text-gray-800 h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-blue-600 text-white shadow-md p-4 flex justify-between items-center shrink-0 z-10">
+        <div>
+            <h1 class="text-2xl font-bold"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Générateur PFEQ - Adaptation de Textes</h1>
+            <p class="text-blue-100 text-sm mt-1">Outil interactif pour les enseignants du primaire (Québec)</p>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="resetForm()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition text-sm flex items-center shadow-md">
+                <i class="fa-solid fa-trash-can mr-2"></i>Effacer tous les choix
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden relative bg-gray-100">
+        
+        <!-- Left Panel: Generator Form -->
+        <section id="left_panel" class="w-full h-full max-w-6xl mx-auto bg-white p-6 md:p-8 overflow-y-auto flex flex-col shadow-xl">
+            
+            <!-- Tabs Navigation -->
+            <div class="flex flex-wrap gap-2 mb-8 shrink-0 pb-4 border-b border-gray-100" id="tabButtons">
+                <button class="tab-btn px-4 py-3 text-base rounded-full bg-blue-100 text-blue-700 font-semibold border border-blue-200 transition" onclick="goToTab(1)">1. Niveau</button>
+                <button class="tab-btn px-4 py-3 text-base rounded-full bg-gray-100 text-gray-600 font-medium border border-gray-200 hover:bg-gray-200 transition" onclick="goToTab(2)">2. Rôle</button>
+                <button class="tab-btn px-4 py-3 text-base rounded-full bg-gray-100 text-gray-600 font-medium border border-gray-200 hover:bg-gray-200 transition" onclick="goToTab(3)">3. Type</button>
+                <button class="tab-btn px-4 py-3 text-base rounded-full bg-gray-100 text-gray-600 font-medium border border-gray-200 hover:bg-gray-200 transition" onclick="goToTab(4)">4. Adaptations</button>
+                <button class="tab-btn px-4 py-3 text-base rounded-full bg-gray-100 text-gray-600 font-medium border border-gray-200 hover:bg-gray-200 transition" onclick="goToTab(5)">5. Thème</button>
+                <button class="tab-btn px-4 py-3 text-base rounded-full bg-gray-100 text-gray-600 font-medium border border-gray-200 hover:bg-gray-200 transition" onclick="goToTab(6)">6. Vocabulaire</button>
+                <button class="tab-btn px-4 py-3 text-base rounded-full bg-gray-100 text-gray-600 font-medium border border-gray-200 hover:bg-gray-200 transition" onclick="goToTab(7)">7. Verbes</button>
+                <button class="tab-btn px-4 py-3 text-base rounded-full bg-gray-100 text-gray-600 font-medium border border-gray-200 hover:bg-gray-200 transition" onclick="goToTab(8)">8. Structure</button>
+                <button class="tab-btn px-4 py-3 text-base rounded-full bg-gray-100 text-gray-600 font-medium border border-gray-200 hover:bg-gray-200 transition" onclick="goToTab(9)">9. Images</button>
+                <button class="tab-btn px-4 py-3 text-base rounded-full bg-gray-100 text-gray-600 font-medium border border-gray-200 hover:bg-gray-200 transition" onclick="goToTab(10)">10. Format</button>
+            </div>
+
+            <!-- Conteneur des onglets -->
+            <div class="flex-1 flex flex-col">
+                <!-- TAB 1: Niveau Académique -->
+                <div id="tab1" class="tab-content active flex-1">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-800 flex items-center"><span class="bg-blue-100 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center mr-4 text-xl">1</span> Niveau académique</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="niveau" value="Cycle 1 (1re et 2e année)" class="hidden custom-radio">
+                            <div class="p-8 border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition text-center h-full flex flex-col justify-center">
+                                <i class="fa-solid fa-seedling text-5xl text-green-500 mb-4"></i>
+                                <h3 class="font-bold text-2xl mb-2">Cycle 1</h3>
+                                <p class="text-gray-500 text-lg">1re et 2e année</p>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="niveau" value="Cycle 2 (3e et 4e année)" class="hidden custom-radio">
+                            <div class="p-8 border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition text-center h-full flex flex-col justify-center">
+                                <i class="fa-solid fa-leaf text-5xl text-green-600 mb-4"></i>
+                                <h3 class="font-bold text-2xl mb-2">Cycle 2</h3>
+                                <p class="text-gray-500 text-lg">3e et 4e année</p>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="niveau" value="Cycle 3 (5e et 6e année)" class="hidden custom-radio">
+                            <div class="p-8 border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition text-center h-full flex flex-col justify-center">
+                                <i class="fa-solid fa-tree text-5xl text-green-700 mb-4"></i>
+                                <h3 class="font-bold text-2xl mb-2">Cycle 3</h3>
+                                <p class="text-gray-500 text-lg">5e et 6e année</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- TAB 2: Rôle de la tâche -->
+                <div id="tab2" class="tab-content flex-1">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-800 flex items-center"><span class="bg-blue-100 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center mr-4 text-xl">2</span> Rôle de la tâche</h2>
+                    
+                    <label class="flex items-start p-6 border-2 rounded-xl mb-6 bg-blue-50 border-blue-200 cursor-pointer transition hover:bg-blue-100">
+                        <input type="checkbox" id="role_adapter" value="Adapter un texte existant" class="mt-1 mr-4 h-6 w-6 text-blue-600 rounded">
+                        <div>
+                            <span class="font-bold text-blue-900 block text-2xl mb-3">Adapter un texte existant</span>
+                            <ul class="text-blue-800 list-disc pl-6 space-y-2 text-lg">
+                                <li>Conserver le sens global et les idées principales à la lettre.</li>
+                                <li>Garder les mêmes personnages, émotions et actions.</li>
+                                <li>Maintenir la structure narrative ou informative.</li>
+                                <li>Adapter uniquement le vocabulaire, la longueur et la complexité.</li>
+                            </ul>
+                        </div>
+                    </label>
+
+                    <div class="mt-6 flex-1 flex flex-col">
+                        <label class="block text-gray-800 font-bold mb-3 text-xl">Texte original à adapter :</label>
+                        <textarea id="texte_original" class="flex-1 w-full border-2 border-gray-300 rounded-xl p-5 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none resize-y min-h-[200px] text-lg" placeholder="Collez ici le texte original que l'IA devra adapter..."></textarea>
+                    </div>
+                </div>
+
+                <!-- TAB 3: Types de textes -->
+                <div id="tab3" class="tab-content flex-1">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-800 flex items-center"><span class="bg-blue-100 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center mr-4 text-xl">3</span> Type de texte</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="type_texte" value="Texte narratif (littéraire)" class="hidden custom-radio">
+                            <div class="p-5 border-2 rounded-xl hover:bg-gray-50 flex items-start transition h-full">
+                                <i class="fa-solid fa-book-open text-blue-500 mt-1 mr-4 text-2xl w-8"></i>
+                                <div><strong class="block text-xl">Texte narratif</strong><span class="text-gray-500 block mt-1 text-lg">Raconte une histoire (situation initiale, péripéties, dénouement).</span></div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="type_texte" value="Texte descriptif" class="hidden custom-radio">
+                            <div class="p-5 border-2 rounded-xl hover:bg-gray-50 flex items-start transition h-full">
+                                <i class="fa-solid fa-eye text-blue-500 mt-1 mr-4 text-2xl w-8"></i>
+                                <div><strong class="block text-xl">Texte descriptif</strong><span class="text-gray-500 block mt-1 text-lg">Décrit un lieu, une personne, un objet. Utilise détails sensoriels.</span></div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="type_texte" value="Texte informatif (courant)" class="hidden custom-radio">
+                            <div class="p-5 border-2 rounded-xl hover:bg-gray-50 flex items-start transition h-full">
+                                <i class="fa-solid fa-newspaper text-blue-500 mt-1 mr-4 text-2xl w-8"></i>
+                                <div><strong class="block text-xl">Texte informatif</strong><span class="text-gray-500 block mt-1 text-lg">Transmet des faits réels, objectif d'apprendre avec structure claire.</span></div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="type_texte" value="Texte explicatif" class="hidden custom-radio">
+                            <div class="p-5 border-2 rounded-xl hover:bg-gray-50 flex items-start transition h-full">
+                                <i class="fa-solid fa-lightbulb text-blue-500 mt-1 mr-4 text-2xl w-8"></i>
+                                <div><strong class="block text-xl">Texte explicatif</strong><span class="text-gray-500 block mt-1 text-lg">Explique un phénomène (liens cause → conséquence).</span></div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="type_texte" value="Texte injonctif (procédural)" class="hidden custom-radio">
+                            <div class="p-5 border-2 rounded-xl hover:bg-gray-50 flex items-start transition h-full">
+                                <i class="fa-solid fa-list-ol text-blue-500 mt-1 mr-4 text-2xl w-8"></i>
+                                <div><strong class="block text-xl">Texte injonctif</strong><span class="text-gray-500 block mt-1 text-lg">Donne des consignes, étapes (ex: recette, règles).</span></div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="type_texte" value="Texte dialogué" class="hidden custom-radio">
+                            <div class="p-5 border-2 rounded-xl hover:bg-gray-50 flex items-start transition h-full">
+                                <i class="fa-solid fa-comments text-blue-500 mt-1 mr-4 text-2xl w-8"></i>
+                                <div><strong class="block text-xl">Texte dialogué</strong><span class="text-gray-500 block mt-1 text-lg">Échanges entre personnages (tirets, verbes de parole).</span></div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="type_texte" value="Texte d'opinion" class="hidden custom-radio">
+                            <div class="p-5 border-2 rounded-xl hover:bg-gray-50 flex items-start transition h-full">
+                                <i class="fa-solid fa-scale-balanced text-blue-500 mt-1 mr-4 text-2xl w-8"></i>
+                                <div><strong class="block text-xl">Texte d'opinion (Cycle 3)</strong><span class="text-gray-500 block mt-1 text-lg">Exprime un point de vue, arguments simples.</span></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- TAB 4: Adaptations -->
+                <div id="tab4" class="tab-content flex-1">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-800 flex items-center"><span class="bg-blue-100 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center mr-4 text-xl">4</span> Adaptations</h2>
+                    <div class="space-y-6">
+                        
+                        <!-- Longueur -->
+                        <div class="p-6 border-2 rounded-xl bg-gray-50">
+                            <h3 class="font-bold text-xl mb-4">Longueur du texte</h3>
+                            <label class="flex items-center mb-4 cursor-pointer">
+                                <input type="checkbox" id="adap_raccourcir" class="mr-4 h-6 w-6 text-blue-600 rounded">
+                                <span class="text-gray-800 text-lg">Simplement raccourcir le texte de manière générale</span>
+                            </label>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="adap_mots_precis" class="mr-4 h-6 w-6 text-blue-600 rounded cursor-pointer">
+                                <span class="text-gray-800 text-lg">Texte ciblant environ</span>
+                                <input type="number" id="adap_mots_nb" class="w-24 mx-3 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-lg" placeholder="ex: 150">
+                                <span class="text-gray-800 text-lg">mots (laisser vide pour que l'IA décide).</span>
+                            </div>
+                        </div>
+
+                        <!-- Mots complexes -->
+                        <div class="p-6 border-2 rounded-xl bg-gray-50">
+                            <h3 class="font-bold text-xl mb-4">Explication des mots complexes</h3>
+                            <label class="flex items-start mb-4 cursor-pointer">
+                                <input type="checkbox" id="adap_mots_complexes" class="mr-4 mt-1 h-6 w-6 text-blue-600 rounded" onchange="toggleGlossaryLogic()">
+                                <span class="text-gray-800 text-lg">Activer l'explication des mots complexes (L'IA choisira 4 à 6 mots adaptés au niveau si la case ci-dessous est vide).</span>
+                            </label>
+                            <textarea id="liste_mots_complexes" rows="2" class="w-full border border-gray-300 rounded-lg p-4 mt-1 mb-4 focus:ring-2 focus:ring-blue-500 outline-none text-lg" placeholder="Écrivez ici les mots complexes, séparés par des virgules (optionnel)"></textarea>
+                            
+                            <label class="flex items-center p-5 bg-blue-100 border border-blue-300 rounded-lg cursor-pointer transition hover:bg-blue-200" id="label_surligner">
+                                <input type="checkbox" id="adap_surligner_bleu" class="mr-4 h-6 w-6 text-blue-700 rounded" onchange="toggleGlossaryLogic()">
+                                <span class="font-bold text-blue-900 text-lg">Surligner en bleu les mots complexes (Active obligatoirement le Glossaire)</span>
+                            </label>
+                        </div>
+
+                        <!-- Régionalismes -->
+                        <div class="p-6 border-2 rounded-xl bg-gray-50">
+                            <label class="flex items-center font-bold text-xl mb-2 cursor-pointer">
+                                <input type="checkbox" id="adap_regionalisme" class="mr-4 h-6 w-6 text-blue-600 rounded" onchange="document.getElementById('zone_regionalisme').classList.toggle('hidden', !this.checked)">
+                                Utiliser des mots régionalistes
+                            </label>
+                            <div id="zone_regionalisme" class="hidden pl-10 mt-4 space-y-4">
+                                <select id="select_region" class="w-full p-4 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                                    <option value="">Choisir une région...</option>
+                                    <option value="Québec">Québec</option>
+                                    <option value="France">France</option>
+                                    <option value="Belgique">Belgique</option>
+                                    <option value="Suisse">Suisse</option>
+                                    <option value="Afrique francophone">Afrique francophone</option>
+                                    <option value="Français standard">Français standard (aucun régionalisme)</option>
+                                    <option value="Autre">Autres régions ou pays...</option>
+                                </select>
+                                <input type="text" id="input_autre_region" class="w-full p-4 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Si 'Autre', écrivez la région ou le pays ici">
+                                <label class="flex items-center mt-4 text-lg font-medium text-green-800 bg-green-100 p-4 rounded-lg border border-green-300 cursor-pointer">
+                                    <input type="checkbox" id="adap_region_parentheses" class="mr-4 h-6 w-6 text-green-600 rounded">
+                                    💡 Afficher les mots standards entre parenthèses (ex: espadrilles (chaussures de sport))
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Simplification -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <label class="flex items-start p-5 border-2 rounded-xl bg-gray-50 cursor-pointer hover:bg-gray-100 transition">
+                                <input type="checkbox" id="adap_phrases_courtes" class="mr-4 mt-1 h-6 w-6 text-blue-600 rounded">
+                                <div><strong class="block text-xl">Phrases plus courtes</strong><span class="text-base text-gray-600 mt-1 block">Simplifie la syntaxe tout en variant les sujets.</span></div>
+                            </label>
+                            <label class="flex items-start p-5 border-2 rounded-xl bg-gray-50 cursor-pointer hover:bg-gray-100 transition">
+                                <input type="checkbox" id="adap_vocabulaire_simple" class="mr-4 mt-1 h-6 w-6 text-blue-600 rounded">
+                                <div><strong class="block text-xl">Vocabulaire simple</strong><span class="text-base text-gray-600 mt-1 block">Remplace les termes ardus par des mots familiers.</span></div>
+                            </label>
+                            <label class="flex items-start p-5 border-2 rounded-xl bg-gray-50 cursor-pointer hover:bg-gray-100 transition">
+                                <input type="checkbox" id="adap_vocabulaire_concret" class="mr-4 mt-1 h-6 w-6 text-blue-600 rounded">
+                                <div><strong class="block text-xl">Vocabulaire concret</strong><span class="text-base text-gray-600 mt-1 block">Évite les mots abstraits (ex: joie -> il sourit).</span></div>
+                            </label>
+                            <label class="flex items-start p-5 border-2 rounded-xl bg-gray-50 cursor-pointer hover:bg-gray-100 transition">
+                                <input type="checkbox" id="adap_ajouter_idees" class="mr-4 mt-1 h-6 w-6 text-blue-600 rounded">
+                                <div><strong class="block text-xl">Ajouter des idées</strong><span class="text-base text-gray-600 mt-1 block">Rallonge le texte avec un vocabulaire enrichi.</span></div>
+                            </label>
+                        </div>
+
+                        <!-- Inférences -->
+                        <div class="p-6 border-2 rounded-xl bg-gray-50">
+                            <h3 class="font-bold text-xl mb-4">Inférences</h3>
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <label class="flex items-center cursor-pointer p-4 border rounded-lg bg-white flex-1 hover:bg-gray-100">
+                                    <input type="radio" name="inference" value="Sans inférence" class="mr-4 h-6 w-6 text-blue-600">
+                                    <span class="font-medium text-lg">Sans inférence (tout est explicite)</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer p-4 border rounded-lg bg-white flex-1 hover:bg-gray-100">
+                                    <input type="radio" name="inference" value="Garder les inférences" class="mr-4 h-6 w-6 text-blue-600">
+                                    <span class="font-medium text-lg">Garder les inférences</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 5: Thème -->
+                <div id="tab5" class="tab-content flex-1">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-800 flex items-center"><span class="bg-blue-100 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center mr-4 text-xl">5</span> Thème et Idées</h2>
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 mb-8 rounded-r-lg">
+                        <p class="text-yellow-800 font-medium text-xl">Consigne stricte pour l'IA : Le thème et les idées du texte de référence doivent obligatoirement être conservés, indépendamment des adaptations choisies.</p>
+                    </div>
+                    <label class="flex items-center p-8 border-2 border-green-200 rounded-xl bg-green-50 cursor-pointer hover:bg-green-100 transition">
+                        <input type="checkbox" id="theme_conserver" class="mr-5 h-8 w-8 text-green-600 rounded">
+                        <span class="font-bold text-2xl text-green-900">Je confirme : Garder impérativement le même thème et les mêmes idées que le texte original.</span>
+                    </label>
+                </div>
+
+                <!-- TAB 6: Vocabulaire à intégrer -->
+                <div id="tab6" class="tab-content flex-1">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-800 flex items-center"><span class="bg-blue-100 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center mr-4 text-xl">6</span> Vocabulaire à intégrer</h2>
+                    <label class="flex items-center mb-6 font-bold text-2xl text-gray-800 cursor-pointer p-6 bg-gray-50 border-2 rounded-xl hover:bg-gray-100">
+                        <input type="checkbox" id="activer_vocab_integrer" class="mr-4 h-8 w-8 text-blue-600 rounded" onchange="document.getElementById('zone_vocab_integrer').classList.toggle('hidden', !this.checked)">
+                        Je souhaite intégrer des mots spécifiques dans le texte
+                    </label>
+                    <div id="zone_vocab_integrer" class="hidden mt-6 p-6 border-2 rounded-xl bg-white">
+                        <p class="text-gray-600 mb-4 text-lg">Les mots ci-dessous devront se retrouver dans le texte, en gardant impérativement une cohérence parfaite avec l'idée du texte.</p>
+                        <textarea id="mots_a_integrer" rows="4" class="w-full border-2 border-gray-300 rounded-xl p-5 focus:ring-4 focus:ring-blue-100 outline-none text-xl" placeholder="Ex: pomme, courir, magnifique, école..."></textarea>
+                    </div>
+                </div>
+
+                <!-- TAB 7: Temps de verbes -->
+                <div id="tab7" class="tab-content flex-1">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-800 flex items-center"><span class="bg-blue-100 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center mr-4 text-xl">7</span> Temps de verbes</h2>
+                    
+                    <label class="flex items-center mb-6 font-bold text-2xl text-gray-800 p-6 bg-gray-50 border-2 rounded-xl cursor-pointer hover:bg-gray-100 transition">
+                        <input type="checkbox" id="activer_verbes" class="mr-5 h-8 w-8 text-blue-600 rounded" onchange="document.getElementById('zone_verbes').classList.toggle('hidden', !this.checked)">
+                        Adapter spécifiquement les temps de verbes
+                    </label>
+
+                    <div id="zone_verbes" class="hidden space-y-6">
+                        <div class="p-6 border-2 border-green-200 bg-green-50 rounded-xl">
+                            <h3 class="font-bold text-green-800 text-xl mb-4">1er cycle (1re et 2e année)</h3>
+                            <div class="flex flex-wrap gap-4">
+                                <label class="bg-white px-4 py-3 text-lg rounded-lg border cursor-pointer hover:bg-green-100"><input type="checkbox" name="verbe" value="Présent de l'indicatif" class="mr-3 h-5 w-5"> Présent</label>
+                                <label class="bg-white px-4 py-3 text-lg rounded-lg border cursor-pointer hover:bg-green-100"><input type="checkbox" name="verbe" value="Futur proche" class="mr-3 h-5 w-5"> Futur proche</label>
+                                <label class="bg-white px-4 py-3 text-lg rounded-lg border cursor-pointer hover:bg-green-100"><input type="checkbox" name="verbe" value="Passé composé (initiation)" class="mr-3 h-5 w-5"> Passé composé</label>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6 border-2 border-yellow-200 bg-yellow-50 rounded-xl">
+                            <h3 class="font-bold text-yellow-800 text-xl mb-4">2e cycle (3e et 4e année)</h3>
+                            <div class="flex flex-wrap gap-4">
+                                <label class="bg-white px-4 py-3 text-lg rounded-lg border cursor-pointer hover:bg-yellow-100"><input type="checkbox" name="verbe" value="Présent de l'indicatif" class="mr-3 h-5 w-5"> Présent</label>
+                                <label class="bg-white px-4 py-3 text-lg rounded-lg border cursor-pointer hover:bg-yellow-100"><input type="checkbox" name="verbe" value="Futur proche" class="mr-3 h-5 w-5"> Futur proche</label>
+                                <label class="bg-white px-4 py-3 text-lg rounded-lg border cursor-pointer hover:bg-yellow-100"><input type="checkbox" name="verbe" value="Futur simple" class="mr-3 h-5 w-5"> Futur simple</label>
+                                <label class="bg-white px-4 py-3 text-lg rounded-lg border cursor-pointer hover:bg-yellow-100"><input type="checkbox" name="verbe" value="Imparfait" class="mr-3 h-5 w-5"> Imparfait</label>
+                                <label class="bg-white px-4 py-3 text-lg rounded-lg border cursor-pointer hover:bg-yellow-100"><input type="checkbox" name="verbe" value="Passé composé" class="mr-3 h-5 w-5"> Passé composé</label>
+                                <label class="bg-white px-4 py-3 text-lg rounded-lg border cursor-pointer hover:bg-yellow-100"><input type="checkbox" name="verbe" value="Impératif présent" class="mr-3 h-5 w-5"> Impératif</label>
+                            </div>
+                        </div>
+
+                        <div class="p-6 border-2 border-red-200 bg-red-50 rounded-xl">
+                            <h3 class="font-bold text-red-800 text-xl mb-4">3e cycle (5e et 6e année)</h3>
+                            <div class="flex flex-wrap gap-4">
+                                <label class="bg-white px-4 py-3 text-lg rounded-lg border cursor-pointer hover:bg-red-100"><input type="checkbox" name="verbe" value="Présent de l'indicatif" class="mr-3 h-5 w-5"> Présent</label>
+                                <label class="bg-white px-4 py-3 text-lg rounded-lg border cursor-pointer hover:bg-red-100"><input type="checkbox" name="verbe" value="Futur simple" class="mr-3 h-5 w-5"> Futur simple</label>
+                                <label class="bg-white px-4 py-3 text-lg rounded-lg border cursor-pointer hover:bg-red-100"><input type="checkbox" name="verbe" value="Imparfait" class="mr-3 h-5 w-5"> Imparfait</label>
+                                <label class="bg-white px-4 py-3 text-lg rounded-lg border cursor-pointer hover:bg-red-100"><input type="checkbox" name="verbe" value="Passé composé" class="mr-3 h-5 w-5"> Passé composé</label>
+                                <label class="bg-white px-4 py-3 text-lg rounded-lg border cursor-pointer hover:bg-red-100"><input type="checkbox" name="verbe" value="Plus-que-parfait" class="mr-3 h-5 w-5"> Plus-que-parfait</label>
+                                <label class="bg-white px-4 py-3 text-lg rounded-lg border cursor-pointer hover:bg-red-100"><input type="checkbox" name="verbe" value="Conditionnel présent" class="mr-3 h-5 w-5"> Conditionnel présent</label>
+                                <label class="bg-white px-4 py-3 text-lg rounded-lg border cursor-pointer hover:bg-red-100"><input type="checkbox" name="verbe" value="Impératif présent" class="mr-3 h-5 w-5"> Impératif</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 8: Structure Obligatoire -->
+                <div id="tab8" class="tab-content flex-1">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-800 flex items-center"><span class="bg-blue-100 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center mr-4 text-xl">8</span> Structure de la réponse</h2>
+                    
+                    <div class="space-y-5">
+                        <div class="p-5 border-2 rounded-xl bg-gray-200 opacity-80 flex justify-between items-center">
+                            <span class="font-bold text-gray-700 text-xl">Section 1 : Texte adapté</span>
+                            <span class="text-base bg-gray-500 text-white px-4 py-2 rounded-full">Obligatoire</span>
+                        </div>
+
+                        <div class="p-5 border-2 rounded-xl flex justify-between items-center transition-colors" id="box_glossaire_status">
+                            <span class="font-bold text-xl">Section 2 : Glossaire</span>
+                            <span class="text-base px-4 py-2 rounded-full bg-yellow-100 text-yellow-800" id="badge_glossaire">Désactivé (Lié à l'onglet 4)</span>
+                        </div>
+
+                        <div class="p-6 border-2 rounded-xl bg-blue-50 border-blue-200">
+                            <label class="flex items-center font-bold text-2xl mb-5 cursor-pointer">
+                                <input type="checkbox" id="struct_questionnaire" class="mr-4 h-7 w-7 text-blue-600 rounded" onchange="document.getElementById('zone_questionnaire').classList.toggle('hidden', !this.checked)">
+                                Section 3 : Questionnaire de compréhension
+                            </label>
+                            
+                            <div id="zone_questionnaire" class="hidden pl-10 space-y-4">
+                                <p class="text-gray-600 mb-3 text-lg">Choisissez le nombre de questions pour chaque type :</p>
+                                
+                                <div class="flex items-center justify-between bg-white p-4 rounded-lg border">
+                                    <div>
+                                        <span class="font-medium text-lg block">Repérage (explicite)</span>
+                                    </div>
+                                    <input type="number" id="q_reperage" min="0" class="w-24 p-2 border rounded-lg text-center focus:ring-2 focus:ring-blue-500 outline-none text-lg" placeholder="0">
+                                </div>
+                                <div class="flex items-center justify-between bg-white p-4 rounded-lg border" id="ligne_inference">
+                                    <div>
+                                        <span class="font-medium text-lg block">Inférences (implicites)</span>
+                                    </div>
+                                    <input type="number" id="q_inference" min="0" class="w-24 p-2 border rounded-lg text-center focus:ring-2 focus:ring-blue-500 outline-none text-lg" placeholder="0">
+                                </div>
+                                <div class="flex items-center justify-between bg-white p-4 rounded-lg border border-purple-300 shadow-sm" id="ligne_interpretation">
+                                    <div>
+                                        <span class="font-bold text-purple-700 text-lg block">Interprétation</span>
+                                        <span class="text-sm text-gray-500 block">Déduire, lier les idées, interpréter (PFEQ)</span>
+                                    </div>
+                                    <input type="number" id="q_interpretation" min="0" class="w-24 p-2 border border-purple-300 rounded-lg text-center focus:ring-2 focus:ring-purple-500 outline-none text-lg bg-purple-50" placeholder="0">
+                                </div>
+                                <div class="flex items-center justify-between bg-white p-4 rounded-lg border">
+                                    <div>
+                                        <span class="font-medium text-lg block">Rappel (ordre chrono)</span>
+                                    </div>
+                                    <input type="number" id="q_rappel" min="0" class="w-24 p-2 border rounded-lg text-center focus:ring-2 focus:ring-blue-500 outline-none text-lg" placeholder="0">
+                                </div>
+                                <div class="flex items-center justify-between bg-white p-4 rounded-lg border">
+                                    <div>
+                                        <span class="font-medium text-lg block">Réaction (opinion)</span>
+                                    </div>
+                                    <input type="number" id="q_reaction" min="0" class="w-24 p-2 border rounded-lg text-center focus:ring-2 focus:ring-blue-500 outline-none text-lg" placeholder="0">
+                                </div>
+                                <div class="flex items-center justify-between bg-white p-4 rounded-lg border">
+                                    <div>
+                                        <span class="font-medium text-lg block">Appréciation (critique)</span>
+                                    </div>
+                                    <input type="number" id="q_appreciation" min="0" class="w-24 p-2 border rounded-lg text-center focus:ring-2 focus:ring-blue-500 outline-none text-lg" placeholder="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 9: Images -->
+                <div id="tab9" class="tab-content flex-1">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-800 flex items-center"><span class="bg-blue-100 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center mr-4 text-xl">9</span> Description d'images</h2>
+                    
+                    <label class="flex items-start p-8 border-2 rounded-xl mb-4 bg-purple-50 border-purple-200 cursor-pointer hover:bg-purple-100 transition">
+                        <input type="checkbox" id="struct_image" class="mt-1 mr-5 h-7 w-7 text-purple-600 rounded">
+                        <div>
+                            <span class="font-bold text-purple-900 block text-2xl mb-3">Générer une description d'image très détaillée</span>
+                            <p class="text-purple-800 text-lg">L'IA créera une section "Section 4 : Description d'images" incluant le lieu, les personnages, l'action, l'ambiance et les couleurs pour faciliter la création visuelle.</p>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- TAB 10: Format Visuel -->
+                <div id="tab10" class="tab-content flex-1">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-800 flex items-center"><span class="bg-blue-100 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center mr-4 text-xl">10</span> Format du rendu de l'IA</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="format_visuel" value="HTML" class="hidden custom-radio" onchange="document.getElementById('zone_html_options').classList.remove('hidden')">
+                            <div class="p-8 border-2 rounded-xl hover:bg-gray-50 flex flex-col h-full transition">
+                                <div class="flex items-center mb-4">
+                                    <i class="fa-brands fa-html5 text-5xl text-orange-500 mr-4"></i>
+                                    <h3 class="font-bold text-2xl">Format HTML (Copier/Coller Word)</h3>
+                                </div>
+                                <p class="text-gray-600 flex-1 text-lg">Génère un rendu visuel sous forme de tableaux (sans code apparent). Prêt à être copié dans Word avec sa mise en forme.</p>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="format_visuel" value="DOC" class="hidden custom-radio" onchange="document.getElementById('zone_html_options').classList.add('hidden')">
+                            <div class="p-8 border-2 rounded-xl hover:bg-gray-50 flex flex-col h-full transition">
+                                <div class="flex items-center mb-4">
+                                    <i class="fa-regular fa-file-word text-5xl text-blue-600 mr-4"></i>
+                                    <h3 class="font-bold text-2xl">Format DOC (Texte Brut)</h3>
+                                </div>
+                                <p class="text-gray-600 flex-1 text-lg">Texte 100% éditable. Aucune mise en forme en tableau. Parfait pour un travail simple.</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Sous-choix HTML -->
+                    <div id="zone_html_options" class="hidden mt-6 p-6 border-2 border-orange-200 bg-orange-50 rounded-xl transition-all">
+                        <h3 class="font-bold text-orange-800 text-xl mb-4">Option pour le Format HTML :</h3>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <label class="flex items-center cursor-pointer p-5 border-2 rounded-lg bg-white flex-1 hover:bg-orange-100 transition custom-radio-container">
+                                <input type="radio" name="html_couleur" value="avec_couleur" checked class="mr-4 h-6 w-6 text-orange-600">
+                                <span class="font-bold text-gray-800 text-lg">Avec couleur de fond (Pastels)</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer p-5 border-2 rounded-lg bg-white flex-1 hover:bg-orange-100 transition custom-radio-container">
+                                <input type="radio" name="html_couleur" value="sans_couleur" class="mr-4 h-6 w-6 text-orange-600">
+                                <span class="font-bold text-gray-800 text-lg">Sans couleur de fond (Fond blanc)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons (Bottom) -->
+            <div class="mt-8 pt-6 border-t border-gray-200 flex justify-between shrink-0 items-center">
+                <button id="btnPrev" onclick="navigate(-1)" class="px-6 py-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl btn-nav flex items-center transition text-xl">
+                    <i class="fa-solid fa-arrow-left mr-3"></i> Précédent
+                </button>
+                <div class="flex gap-4">
+                    <button id="btnNext" onclick="navigate(1)" class="px-6 py-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-xl btn-nav flex items-center transition text-xl">
+                        Suivant <i class="fa-solid fa-arrow-right ml-3"></i>
+                    </button>
+                    <!-- Boutons d'action -->
+                    <button onclick="generatePrompt()" class="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl flex items-center transition shadow-lg text-xl transform hover:scale-105">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-3"></i> Générer la requête
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Panel: Result (HIDDEN BY DEFAULT) -->
+        <section id="right_panel" class="hidden flex-col bg-gray-900 text-white p-6 h-full border-l border-gray-700 z-20 shadow-2xl">
+            <div class="flex justify-between items-center mb-4 shrink-0">
+                <h2 class="text-2xl font-bold flex items-center text-blue-400">
+                    <i class="fa-solid fa-terminal mr-3"></i> Votre Requête
+                </h2>
+                <button onclick="closeRightPanel()" class="text-gray-400 hover:text-white transition p-2 bg-gray-800 rounded-lg hover:bg-gray-700" title="Fermer et retourner en plein écran">
+                    <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+            </div>
+            
+            <p class="text-gray-400 text-base mb-4 shrink-0">Copiez le texte ci-dessous et collez-le dans ChatGPT, Claude ou Gemini.</p>
+
+            <textarea id="output_prompt" readonly class="flex-1 w-full bg-gray-800 text-green-400 p-5 rounded-xl font-mono text-base resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-y-auto mb-4 border border-gray-700 shadow-inner"></textarea>
+
+            <!-- Copy Button -->
+            <div class="shrink-0 flex flex-col gap-2">
+                <button onclick="copyPrompt()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-5 px-4 rounded-xl transition flex justify-center items-center shadow-lg text-xl">
+                    <i class="fa-solid fa-copy mr-3 text-2xl"></i> Copier la requête
+                </button>
+                <div id="copy_msg" class="text-center text-green-400 text-base h-5 font-bold transition-opacity opacity-0 mt-2">✓ Copié dans le presse-papier !</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JavaScript Logic -->
+    <script>
+        let currentTab = 1;
+        const totalTabs = 10;
+
+        function init() {
+            showTab(currentTab);
+            document.getElementById('zone_regionalisme').classList.add('hidden');
+            document.getElementById('zone_vocab_integrer').classList.add('hidden');
+            document.getElementById('zone_verbes').classList.add('hidden');
+            document.getElementById('zone_questionnaire').classList.add('hidden');
+            document.getElementById('zone_html_options').classList.add('hidden');
+            toggleGlossaryLogic();
+        }
+
+        function showTab(n) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(`tab${n}`).classList.add('active');
+            
+            document.querySelectorAll('.tab-btn').forEach((btn, index) => {
+                if (index + 1 === n) {
+                    btn.classList.remove('bg-gray-100', 'text-gray-600');
+                    btn.classList.add('bg-blue-100', 'text-blue-700', 'ring-2', 'ring-blue-400');
+                } else {
+                    btn.classList.add('bg-gray-100', 'text-gray-600');
+                    btn.classList.remove('bg-blue-100', 'text-blue-700', 'ring-2', 'ring-blue-400');
+                }
+            });
+
+            document.getElementById('btnPrev').disabled = (n === 1);
+            document.getElementById('btnNext').disabled = (n === totalTabs);
+            
+            const btnContainer = document.getElementById('tabButtons');
+            const activeBtn = btnContainer.children[n-1];
+            if(activeBtn) {
+                activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+
+        function navigate(n) {
+            currentTab += n;
+            if (currentTab < 1) currentTab = 1;
+            if (currentTab > totalTabs) currentTab = totalTabs;
+            showTab(currentTab);
+        }
+
+        function goToTab(n) {
+            currentTab = n;
+            showTab(n);
+        }
+
+        function toggleGlossaryLogic() {
+            const surligner = document.getElementById('adap_surligner_bleu').checked;
+            const motsComplexes = document.getElementById('adap_mots_complexes').checked;
+            const badge = document.getElementById('badge_glossaire');
+            const box = document.getElementById('box_glossaire_status');
+
+            if (surligner || motsComplexes) {
+                badge.textContent = "Activé automatiquement";
+                badge.classList.replace('bg-yellow-100', 'bg-green-100');
+                badge.classList.replace('text-yellow-800', 'text-green-800');
+                box.classList.replace('bg-gray-200', 'bg-green-50');
+                box.classList.replace('border-gray-200', 'border-green-200');
+            } else {
+                badge.textContent = "Désactivé";
+                badge.classList.replace('bg-green-100', 'bg-yellow-100');
+                badge.classList.replace('text-green-800', 'text-yellow-800');
+                box.classList.replace('bg-green-50', 'bg-transparent');
+                box.classList.replace('border-green-200', 'border-gray-200');
+            }
+        }
+
+        document.querySelectorAll('input[name="inference"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const ligneInference = document.getElementById('ligne_inference');
+                const qInferenceInput = document.getElementById('q_inference');
+                if (e.target.value === "Sans inférence") {
+                    ligneInference.classList.add('opacity-50', 'pointer-events-none');
+                    qInferenceInput.value = '';
+                } else {
+                    ligneInference.classList.remove('opacity-50', 'pointer-events-none');
+                }
+            });
+        });
+
+        function resetForm() {
+            document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(el => el.value = '');
+            // Décocher absolument toutes les cases
+            document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(el => el.checked = false);
+            
+            // Remettre la couleur par défaut
+            const radioCouleur = document.querySelector('input[name="html_couleur"][value="avec_couleur"]');
+            if(radioCouleur) radioCouleur.checked = true;
+
+            document.getElementById('zone_regionalisme').classList.add('hidden');
+            document.getElementById('zone_vocab_integrer').classList.add('hidden');
+            document.getElementById('zone_verbes').classList.add('hidden');
+            document.getElementById('zone_questionnaire').classList.add('hidden');
+            document.getElementById('zone_html_options').classList.add('hidden');
+            document.getElementById('output_prompt').value = '';
+            
+            closeRightPanel();
+            toggleGlossaryLogic();
+            goToTab(1);
+        }
+
+        function openRightPanel() {
+            const left = document.getElementById('left_panel');
+            const right = document.getElementById('right_panel');
+            right.classList.remove('hidden');
+            right.classList.add('flex', 'w-full', 'lg:w-2/5');
+            left.classList.remove('max-w-6xl', 'mx-auto');
+            left.classList.add('lg:w-3/5', 'border-r-2', 'border-gray-300');
+        }
+
+        function closeRightPanel() {
+            const left = document.getElementById('left_panel');
+            const right = document.getElementById('right_panel');
+            right.classList.add('hidden');
+            right.classList.remove('flex', 'w-full', 'lg:w-2/5');
+            left.classList.add('max-w-6xl', 'mx-auto');
+            left.classList.remove('lg:w-3/5', 'border-r-2', 'border-gray-300');
+        }
+
+        function generatePrompt() {
+            openRightPanel();
+
+            let prompt = `Agis en tant qu'expert en didactique du français au primaire (PFEQ) et auteur professionnel de littérature jeunesse.\n`;
+            prompt += `Ton style littéraire doit offrir une narration fluide, un texte de qualité éditoriale avec une cohérence globale, une structure narrative claire, une progression logique et un schéma narratif respecté.\n`;
+            prompt += `Assure un enchaînement fluide, des descriptions riches, des images mentales fortes, un vocabulaire varié, un style immersif et un ton adapté au primaire (Québec).\n`;
+            prompt += `Le langage doit être accessible, de compréhension facile, avec des phrases équilibrées, sans incohérences, sans contradictions, et sans répétitions.\n`;
+            prompt += `Ta tâche est d'adapter le texte original fourni à la fin de cette requête afin d'en faire une tâche de lecture de haute qualité pédagogique pour des élèves.\n\n`;
+
+            // 1. Niveau
+            const niveau = document.querySelector('input[name="niveau"]:checked');
+            if (niveau) {
+                prompt += `📚 NIVEAU ACADÉMIQUE CIBLÉ : ${niveau.value}\nLe vocabulaire, la syntaxe et la complexité doivent être parfaitement adaptés à ce niveau de lecture.\n\n`;
+            }
+
+            // 2. Rôle
+            const role = document.getElementById('role_adapter').checked;
+            const texteOriginal = document.getElementById('texte_original').value.trim();
+            if (role) {
+                prompt += `🎯 RÔLE ET CONTRAINTES STRICTES :\n- Tu dois adapter le texte existant fourni.\n- CONSERVER LE SENS GLOBAL.\n- Respecter à la lettre les idées principales.\n- Garder les mêmes personnages, les mêmes émotions et les mêmes actions.\n- Maintenir la structure narrative ou informative.\n- Adapter SEULEMENT le vocabulaire, la longueur et la complexité.\n\n`;
+            }
+
+            // 3. Type de texte
+            const typeTexte = document.querySelector('input[name="type_texte"]:checked');
+            let needSubtitles = false;
+            if (typeTexte) {
+                prompt += `📖 TYPE DE TEXTE À RESPECTER : ${typeTexte.value}\n`;
+                const t = typeTexte.value;
+                if (t.includes("narratif")) prompt += `- Structure attendue : situation initiale, élément déclencheur, péripéties, dénouement, situation finale. Personnages, lieux et actions clairs.\n`;
+                if (t.includes("descriptif")) prompt += `- Utilise des adjectifs, comparaisons, détails sensoriels.\n`;
+                if (t.includes("informatif")) prompt += `- Structure claire avec faits et explications. Utilise des sous-titres si nécessaire.\n`;
+                if (t.includes("explicatif")) prompt += `- Mets en évidence le lien de cause à conséquence. Utilise des sous-titres si nécessaire.\n`;
+                if (t.includes("injonctif")) prompt += `- Donne des consignes/étapes claires. Utilise des sous-titres si nécessaire.\n`;
+                if (t.includes("dialogué")) prompt += `- Présence de dialogues clairs (tirets, verbes de parole). Utilise des sous-titres si nécessaire.\n`;
+                if (t.includes("d'opinion")) prompt += `- Exprime un point de vue avec des arguments simples. Utilise des sous-titres si nécessaire.\n`;
+                prompt += `\n`;
+                if (["Texte descriptif", "Texte informatif (courant)", "Texte explicatif", "Texte injonctif (procédural)", "Texte dialogué", "Texte d'opinion"].includes(t)) {
+                    needSubtitles = true;
+                }
+            }
+
+            // 4. Adaptations
+            let adaptations = [];
+            if (document.getElementById('adap_raccourcir').checked) adaptations.push("- Simplement raccourcir le texte de manière générale.");
+            
+            const nbMots = document.getElementById('adap_mots_nb').value;
+            if (document.getElementById('adap_mots_precis').checked && nbMots) {
+                adaptations.push(`- Rendre le texte plus court, ciblant environ ${nbMots} mots.`);
+            }
+
+            const isMotsComplexes = document.getElementById('adap_mots_complexes').checked;
+            const isSurligner = document.getElementById('adap_surligner_bleu').checked;
+            let motsList = document.getElementById('liste_mots_complexes').value.trim();
+            
+            if (isMotsComplexes || isSurligner || motsList !== "") {
+                let consigneMots = "- Explication des mots complexes : ";
+                if (motsList !== "") consigneMots += `Les mots suivants sont considérés comme complexes : [${motsList}]. `;
+                else consigneMots += `Sélectionne de toi-même 4 à 6 mots difficiles pour le niveau ciblé. `;
+                
+                if (isSurligner) consigneMots += `Tu dois IMPÉRATIVEMENT mettre ces mots en évidence dans le texte. Une section Glossaire sera exigée à la fin.`;
+                adaptations.push(consigneMots);
+            }
+
+            if (document.getElementById('adap_regionalisme').checked) {
+                let region = document.getElementById('select_region').value;
+                if (region === "Autre") region = document.getElementById('input_autre_region').value;
+                if (region) {
+                    let regStr = `- Utiliser des mots régionalistes (${region}) : Adapte le texte en remplaçant certains mots ou expressions par des régionalismes propres à cette région (3 à 5 maximum). Le sens doit rester inchangé et accessible.`;
+                    if (document.getElementById('adap_region_parentheses').checked) regStr += ` Affiche impérativement les mots standards entre parenthèses juste après (ex: espadrilles (chaussures de sport)).`;
+                    adaptations.push(regStr);
+                }
+            }
+
+            if (document.getElementById('adap_phrases_courtes').checked) adaptations.push("- Phrases plus courtes : Simplifie les phrases complexes en plusieurs phrases simples, mais varie les sujets pour éviter la monotonie.");
+            if (document.getElementById('adap_vocabulaire_simple').checked) adaptations.push("- Vocabulaire simple : Remplace le vocabulaire difficile par des mots plus simples et communs.");
+            if (document.getElementById('adap_vocabulaire_concret').checked) adaptations.push("- Vocabulaire concret : Évite les mots abstraits (joie, frustration) et remplace-les par des actions visibles (ex: il sourit, il tremble, il pleure).");
+            if (document.getElementById('adap_ajouter_idees').checked) adaptations.push("- Ajouter des idées : Rendre le texte plus long avec un vocabulaire enrichi et des descriptions supplémentaires tout en gardant l'essence.");
+            
+            const inf = document.querySelector('input[name="inference"]:checked');
+            if (inf) {
+                if (inf.value === "Sans inférence") adaptations.push("- Inférences : Rendre TOUTES les informations explicites. L'élève ne doit pas avoir à déduire quoi que ce soit.");
+                if (inf.value === "Garder les inférences") adaptations.push("- Inférences : Garder les inférences présentes dans le texte original (simples ou complexes selon le texte).");
+            }
+
+            if (adaptations.length > 0) prompt += `🛠️ ADAPTATIONS SPÉCIFIQUES REQUISES :\n${adaptations.join('\n')}\n\n`;
+
+            // 5. Thème
+            if (document.getElementById('theme_conserver').checked) {
+                prompt += `🔒 THÈME : Garder IMPÉRATIVEMENT le même thème et les mêmes idées que le texte original.\n\n`;
+            }
+
+            // 6. Vocabulaire à intégrer
+            if (document.getElementById('activer_vocab_integrer').checked) {
+                const motsIntegrer = document.getElementById('mots_a_integrer').value.trim();
+                if (motsIntegrer) prompt += `🧩 VOCABULAIRE À INTÉGRER : Insère naturellement les mots suivants : [${motsIntegrer}]. Maintiens une cohérence parfaite de l'histoire.\n\n`;
+            }
+
+            // 7. Verbes
+            if (document.getElementById('activer_verbes').checked) {
+                const verbesCoches = Array.from(document.querySelectorAll('input[name="verbe"]:checked')).map(cb => cb.value);
+                if (verbesCoches.length > 0) prompt += `⏱️ TEMPS DE VERBES : Respect strict des temps de verbes suivants : ${verbesCoches.join(', ')}.\n\n`;
+            }
+
+            // 8. Structure
+            prompt += `📑 STRUCTURE OBLIGATOIRE DE LA RÉPONSE :\nTa réponse doit comporter les sections suivantes clairement identifiées :\n\n`;
+            prompt += `Section 1 : Texte\n- Le texte adapté respectant toutes les consignes ci-dessus.\n`;
+            if (needSubtitles) prompt += `- Utilise des titres et sous-titres pour organiser le texte.\n`;
+
+            if (isMotsComplexes || isSurligner) {
+                prompt += `\nSection 2 : Glossaire\n- Cette section est OBLIGATOIRE suite à la demande d'explication des mots complexes.\n- Liste les mots complexes mis en évidence dans le texte.\n- Fournis une définition simple, claire et avec des mots concrets et faciles à comprendre pour le niveau scolaire.\n`;
+            }
+
+            if (document.getElementById('struct_questionnaire').checked) {
+                prompt += `\nSection 3 : Questionnaire\n- Inclus un questionnaire de compréhension organisé selon les choix suivants :\n`;
+                const qRep = document.getElementById('q_reperage').value;
+                const qInf = document.getElementById('q_inference').value;
+                const qInt = document.getElementById('q_interpretation').value;
+                const qRap = document.getElementById('q_rappel').value;
+                const qRea = document.getElementById('q_reaction').value;
+                const qApp = document.getElementById('q_appreciation').value;
+
+                if (qRep > 0) prompt += `  * ${qRep} question(s) de repérage (explicite : trouver info écrite clairement sans deviner).\n`;
+                if (qInf > 0 && (!inf || inf.value !== "Sans inférence")) prompt += `  * ${qInf} question(s) d'inférence (implicite : lire entre les lignes, déduire une info non écrite).\n`;
+                if (qInt > 0) prompt += `  * ${qInt} question(s) d'interprétation (PFEQ) : amener l'élève à aller au-delà de l'information explicite, déduire, établir des liens entre les idées, interpréter les intentions, émotions ou valeurs des personnages.\n`;
+                if (qRap > 0) prompt += `  * ${qRap} question(s) de rappel (remettre les événements/actions dans l'ordre).\n`;
+                if (qRea > 0) prompt += `  * ${qRea} question(s) de réaction (opinion personnelle, émotion, ex: qu'aurais-tu fait à sa place ?).\n`;
+                if (qApp > 0) prompt += `  * ${qApp} question(s) d'appréciation (jugement critique justifié, ex: recommanderais-tu ce texte et pourquoi ?).\n`;
+            }
+
+            if (document.getElementById('struct_image').checked) {
+                prompt += `\nSection 4 : Description d'images\n- Décrire de manière détaillée les différentes actions, parties de l'histoire en intégrant une description détaillée des lieux, des personnages, de l'ambiance, et couleurs pour faciliter la création visuelle.\n- Il doit y avoir entre 3 et 7 descriptions détaillées selon les moments clés de l'histoire, ou selon les images nécessaires s'il s'agit d'un autre type de texte.\n`;
+            }
+
+            prompt += `\n`;
+
+            // 10. Format Visuel (NOUVELLES CONSIGNES STRICTES DE L'UTILISATEUR)
+            const format = document.querySelector('input[name="format_visuel"]:checked');
+            if (format) {
+                if (format.value === "HTML") {
+                    const htmlOptionNode = document.querySelector('input[name="html_couleur"]:checked');
+                    const htmlOptionCouleur = htmlOptionNode ? htmlOptionNode.value : "avec_couleur";
+
+                    prompt += `*** RÈGLES DE FORMATAGE VISUEL OBLIGATOIRES (QUALITÉ MAISON D'ÉDITION ET COMPATIBILITÉ WORD) ***\n`;
+                    prompt += `Tu es un expert en édition et conception graphique de matériel pédagogique. Ton objectif est de produire un document dont l'esthétique rivalise avec les cahiers d'apprentissage professionnels (propre, aéré, structuré et coloré).\n\n`;
+                    
+                    prompt += `1. 🎯 RÈGLE D'OR ABSOLUE :\n`;
+                    prompt += `Le texte généré doit TOUJOURS apparaître visuellement sous forme de texte formaté et d'encadrés graphiques prêts à lire.\n`;
+                    prompt += `IL EST STRICTEMENT INTERDIT de placer ton résultat dans des blocs de code informatique (ne commence et ne termine JAMAIS ta réponse par \`\`\`html ou \`\`\`markdown).\n`;
+                    prompt += `Le code HTML doit être écrit "à nu" dans ta réponse pour que l'interface graphique l'interprète. L'enseignant pourra ainsi copier/coller le rendu visuel final directement dans Word.\n\n`;
+
+                    prompt += `2. 🎨 STRUCTURE DES ENCADRÉS (TABLE HTML OBLIGATOIRE) :\n`;
+                    prompt += `Pour toutes les zones nécessitant une mise en évidence (consignes, textes adaptés, zones de réponse) :\n`;
+                    prompt += `- OBLIGATOIRE : utiliser uniquement des tableaux HTML (<table>) à UNE SEULE cellule.\n`;
+                    prompt += `- INTERDIT : utiliser des <div> pour encadrer ou colorer.\n`;
+                    prompt += `- INTERDIT : utiliser des tableaux multi-cellules, imbriqués ou fusionnés.\n`;
+                    prompt += `- Chaque tableau = 1 encadré = 1 idée pédagogique.\n`;
+                    
+                    if (htmlOptionCouleur === "avec_couleur") {
+                        prompt += `- Les tableaux HTML doivent utiliser ces teintes pastel pour la mise en évidence :\n`;
+                        prompt += `  * Texte/Histoire : Fond Bleu très clair (#F0F8FF), bordure (#B0C4DE)\n`;
+                        prompt += `  * Consigne : Fond Vert très clair (#F5FFFA), bordure (#98FB98)\n`;
+                        prompt += `  * Indice/Important : Fond Jaune très clair (#FFFFE0)\n`;
+                    } else {
+                        prompt += `- Les tableaux HTML doivent utiliser le blanc pour la mise en évidence :\n`;
+                        prompt += `  * Texte/Histoire : Fond Blanc\n`;
+                        prompt += `  * Consigne : Fond blanc\n`;
+                        prompt += `  * Indice/Important : Fond blanc\n`;
+                    }
+                    
+                    prompt += `- Respecte scrupuleusement le "padding" (ex: padding="15" ou style="padding: 15px;").\n\n`;
+
+                    prompt += `3. ⚙️ COMPATIBILITÉ :\n`;
+                    prompt += `Les encadrés doivent rester stables lors d'un copier-coller dans Word. Aucun élément ne doit s'étirer anormalement.\n\n`;
+
+                } else if (format.value === "DOC") {
+                    prompt += `*** RÈGLES DE FORMATAGE VISUEL OBLIGATOIRES (FORMAT DOC / TEXTE BRUT) ***\n`;
+                    prompt += `Le format DOC doit produire un texte 100 % éditable, conçu pour permettre à l'enseignant de : corriger directement le texte, annoter et surligner, ajouter des commentaires pédagogiques, modifier facilement le contenu, imprimer sans ajustement.\n`;
+                    prompt += `👉 C'est un format de travail pédagogique brut, et non un format de présentation graphique.\n\n`;
+                    
+                    prompt += `🧠 RÈGLE D'OR ABSOLUE\n`;
+                    prompt += `Le contenu doit être généré en texte brut structuré uniquement.\n`;
+                    prompt += `❌ Interdictions absolues : aucun HTML, aucun tableau, aucun encadré, aucune couleur, aucun arrière-plan, aucun symbole décoratif, aucun emoji, aucun élément graphique.\n\n`;
+
+                    prompt += `🧾 STRUCTURE OBLIGATOIRE DU DOCUMENT\n`;
+                    prompt += `Le texte doit être organisé avec une structure claire et constante :\n`;
+                    prompt += `1. TITRE : Simple, lisible, sans mise en forme décorative.\n`;
+                    prompt += `2. TEXTE PRINCIPAL : Paragraphes courts, phrases adaptées au niveau scolaire choisi, cohérence narrative ou explicative stricte, respect du type de texte sélectionné.\n`;
+                    prompt += `3. QUESTIONNAIRE DE COMPRÉHENSION : Inclure systématiquement des questions organisées par catégories. Les questions doivent être numérotées.\n`;
+                    prompt += `4. GLOSSAIRE (SI ACTIVÉ) : Liste de mots complexes extraits du texte. Définition simple, claire et adaptée à l'âge.\n`;
+                    prompt += `5. DESCRIPTION D'IMAGE (OBLIGATOIRE) : Description détaillée et précise utilisée pour générer une illustration pédagogique.\n\n`;
+                }
+            } else {
+                prompt += `Veuillez produire un rendu clair, aéré et professionnel.\n\n`;
+            }
+
+            // Original Text Placement
+            if (role && texteOriginal) {
+                prompt += `==============================\n`;
+                prompt += `TEXTE ORIGINAL À ADAPTER :\n`;
+                prompt += `==============================\n`;
+                prompt += `${texteOriginal}\n\n`;
+            }
+
+            // Final Polish / Bonus
+            prompt += `✨ 🔥 Bonus :\n`;
+            prompt += `Relis mentalement le texte avant de le finaliser, améliore la fluidité avant de répondre, assure-toi d'une relecture implicite avant finalisation. Produis une version finale publiée (niveau éditeur) sans incohérences et sans répétitions.`;
+
+            document.getElementById('output_prompt').value = prompt;
+        }
+
+        function copyPrompt() {
+            const promptText = document.getElementById('output_prompt');
+            if (!promptText.value) return;
+            
+            promptText.select();
+            promptText.setSelectionRange(0, 99999); 
+            
+            try {
+                navigator.clipboard.writeText(promptText.value).then(() => {
+                    showCopySuccess();
+                }).catch(err => {
+                    document.execCommand('copy');
+                    showCopySuccess();
+                });
+            } catch (err) {
+                document.execCommand('copy');
+                showCopySuccess();
+            }
+        }
+
+        function showCopySuccess() {
+            const msg = document.getElementById('copy_msg');
+            msg.classList.remove('opacity-0');
+            setTimeout(() => {
+                msg.classList.add('opacity-0');
+            }, 2000);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
