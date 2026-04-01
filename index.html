@@ -178,6 +178,20 @@
                     <h2 class="text-3xl font-bold mb-6 text-gray-800 flex items-center"><span class="bg-blue-100 text-blue-600 w-10 h-10 rounded-full flex items-center justify-center mr-4 text-xl">4</span> Adaptations</h2>
                     <div class="space-y-6">
                         
+                        <!-- Palier ILSS -->
+                        <div class="p-6 border-2 border-indigo-200 rounded-xl bg-indigo-50">
+                            <h3 class="font-bold text-xl mb-4 text-indigo-900"><i class="fa-solid fa-layer-group mr-2"></i>Palier ILSS (Intégration linguistique)</h3>
+                            <label for="palierIlss" class="block text-indigo-800 text-lg mb-2">Choisir le palier de l'élève pour adapter le texte selon ses capacités :</label>
+                            <select id="palierIlss" class="w-full p-4 border border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-lg bg-white">
+                                <option value="">-- Aucun palier spécifique sélectionné --</option>
+                                <option value="1">Palier 1 (Mots/phrases simples, structure prévisible, sujet familier)</option>
+                                <option value="2">Palier 2 (Quelques phrases simples, vocabulaire de base, explicite)</option>
+                                <option value="3">Palier 3 (Quelques paragraphes, vocabulaire courant, sujet familier)</option>
+                                <option value="4">Palier 4 (Phrases complexes, vocabulaire spécifique, informations implicites)</option>
+                                <option value="5">Palier 5 (Phrases variées, vocabulaire étendu, sujet peu familier)</option>
+                            </select>
+                        </div>
+
                         <!-- Longueur -->
                         <div class="p-6 border-2 rounded-xl bg-gray-50">
                             <h3 class="font-bold text-xl mb-4">Longueur du texte</h3>
@@ -508,6 +522,14 @@
 
     <!-- JavaScript Logic -->
     <script>
+        const descriptionsPalierILSS = {
+            "1": "L’élève comprend des textes courants ou littéraires, illustrés et dont le sujet est familier. Ces textes à structure prévisible sont constitués de mots ou de phrases simples liés à son environnement immédiat. Il reconnaît globalement certains mots appris en classe et lit des mots composés de syllabes simples. Il associe des mots à des images et réagit de façon non verbale au texte.\n* Avec l’aide de l’enseignant, l’élève utilise des stratégies enseignées.",
+            "2": "L’élève comprend des textes courants ou littéraires, illustrés et dont le sujet est familier. Ces textes à structure généralement prévisible, sont constitués de quelques phrases simples et d’un vocabulaire de base. Il reconnaît la plupart des mots appris en classe et lit des mots composés de syllabes simples et parfois complexes. Il repère des informations explicites et exprime sa réaction au texte en faisant quelques liens avec ses connaissances et ses expériences.\n* Avec l’aide de l’enseignant, l’élève utilise des stratégies enseignées et les ressources suggérées.",
+            "3": "L’élève comprend des textes courants ou littéraires, illustrés et dont le sujet est généralement familier. Ces textes sont constitués de quelques paragraphes comportant des phrases simples et un vocabulaire courant. Il lit par groupe de mots, avec ou sans hésitation. Il identifie le sujet traité et se sert du contexte pour comprendre le sens de nouveaux mots. Il sélectionne des informations explicites et relève parfois l’idée principale du texte. Il effectue des liens avec ses connaissances et ses expériences et se sert de faits ou d’exemples du texte pour appuyer sa réaction.\n* L’élève utilise des stratégies suggérées. Avec l’aide de l’enseignant, il répond à des questions sur sa démarche de lecture.",
+            "4": "L’élève comprend des textes courants ou littéraires dont le sujet est plus ou moins familier. Ces textes sont constitués de plusieurs paragraphes comportant des phrases complexes et un vocabulaire spécifique des disciplines scolaires. Il dégage l’idée principale ainsi que certaines informations essentielles et se sert d’indices linguistiques pour déduire le sens du texte. Il regroupe des informations explicites et relève les principaux éléments qui illustrent la progression dans le texte. Il exprime sa réaction au texte en faisant des liens avec différents textes lus, vus ou entendus.\n* L’élève utilise des stratégies et différentes ressources. Avec l’aide de l’enseignant, il décrit sa démarche de lecture et identifie ses forces et ses faiblesses.",
+            "5": "L’élève comprend des textes courants ou littéraires dont le sujet est peu ou pas familier. Ces textes sont constitués de plusieurs paragraphes comportant des phrases variées et un vocabulaire étendu. Il distingue l’idée principale des idées secondaires et peut résumer le texte en présentant les idées de façon logique ou chronologique. Il se sert de ses connaissances antérieures et du contenu du texte pour dégager le sens de certaines informations implicites. Il réagit au texte en exprimant son interprétation personnelle et en tenant compte des propos de ses pairs lors des discussions.\n* L’élève utilise une variété de stratégies et différentes ressources. Il explique sa démarche de lecture et le choix des stratégies ou des ressources utilisées. Il identifie ses forces et ses faiblesses."
+        };
+
         let currentTab = 1;
         const totalTabs = 10;
 
@@ -592,7 +614,7 @@
         });
 
         function resetForm() {
-            document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(el => el.value = '');
+            document.querySelectorAll('input[type="text"], input[type="number"], textarea, select').forEach(el => el.value = '');
             // Décocher absolument toutes les cases
             document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(el => el.checked = false);
             
@@ -671,8 +693,14 @@
                 }
             }
 
-            // 4. Adaptations
+            // 4. Adaptations (incluant le Palier ILSS)
             let adaptations = [];
+            
+            const palierSelectionne = document.getElementById('palierIlss').value;
+            if (palierSelectionne) {
+                adaptations.push(`- PROFIL DE L'ÉLÈVE (Palier ILSS ${palierSelectionne}) : Tu dois impérativement adapter le texte pour qu'il corresponde aux capacités de ce profil : \n  "${descriptionsPalierILSS[palierSelectionne]}"`);
+            }
+            
             if (document.getElementById('adap_raccourcir').checked) adaptations.push("- Simplement raccourcir le texte de manière générale.");
             
             const nbMots = document.getElementById('adap_mots_nb').value;
@@ -765,7 +793,7 @@
 
             prompt += `\n`;
 
-            // 10. Format Visuel (NOUVELLES CONSIGNES STRICTES DE L'UTILISATEUR)
+            // 10. Format Visuel
             const format = document.querySelector('input[name="format_visuel"]:checked');
             if (format) {
                 if (format.value === "HTML") {
