@@ -279,6 +279,10 @@
                                     <input type="radio" name="inference" value="Garder les inférences" class="mr-4 h-6 w-6 text-blue-600">
                                     <span class="font-medium text-lg">Garder les inférences</span>
                                 </label>
+                                <label class="flex items-center cursor-pointer p-4 border rounded-lg bg-white flex-1 hover:bg-gray-100">
+                                    <input type="radio" name="inference" value="Ajouter des inférences" class="mr-4 h-6 w-6 text-blue-600">
+                                    <span class="font-medium text-lg">Ajouter des inférences</span>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -740,6 +744,7 @@
             if (inf) {
                 if (inf.value === "Sans inférence") adaptations.push("- Inférences : Rendre TOUTES les informations explicites. L'élève ne doit pas avoir à déduire quoi que ce soit.");
                 if (inf.value === "Garder les inférences") adaptations.push("- Inférences : Garder les inférences présentes dans le texte original (simples ou complexes selon le texte).");
+                if (inf.value === "Ajouter des inférences") adaptations.push("- Inférences : Ajouter des inférences au texte. Pour rappel, une inférence implique de ne pas tout dire explicitement. Il peut s'agir d'inférences simples (lien facile à faire, ex: 'Il prend son parapluie' -> il pleut) ou d'inférences complexes (nécessitent des connaissances antérieures ou l'interprétation des émotions/intentions).");
             }
 
             if (adaptations.length > 0) prompt += `🛠️ ADAPTATIONS SPÉCIFIQUES REQUISES :\n${adaptations.join('\n')}\n\n`;
